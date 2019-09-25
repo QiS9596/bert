@@ -114,3 +114,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# data
+/data
+# temp output
+/tmp
+# pretrained model
+/uncased_L-12_H-768_A-12
+
+# IDE files
+/.idea
