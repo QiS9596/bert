@@ -13,6 +13,7 @@ df = df.sample(frac=1.0)
 test = df.iloc[0:test_size]
 dev = df.iloc[test_size:test_size+dev_size]
 train = df.iloc[test_size+dev_size:]
+df.to_csv(os.path.join(vp_data_path,'all.tsv'), header=False, sep='\t', index=False)
 test.to_csv(os.path.join(vp_data_path,'test.tsv'),header=False, sep='\t',index=False)
 dev.to_csv(os.path.join(vp_data_path,'dev.tsv'),header=False, sep='\t',index=False)
 train.to_csv(os.path.join(vp_data_path,'train.tsv'),header=False, sep='\t',index=False)
