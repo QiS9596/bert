@@ -50,7 +50,7 @@ if VAL_DIR not in os.listdir(project_data_path):
     os.mkdir(os.path.join(project_data_path, VAL_DIR))
 else:
     shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
-if args.output_dir in os.listdir():
+if args.output_dir in os.listdir('.'):
     shutil.rmtree(args.output_dir)
 # validation dirs has the validation folds
 validation_dirs = []
