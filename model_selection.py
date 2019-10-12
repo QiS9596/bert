@@ -46,10 +46,10 @@ if ALL_FILE_NAME not in os.listdir(project_data_path):
 all_data = os.path.join(project_data_path, ALL_FILE_NAME)
 df = pd.read_csv(all_data, sep='\t', header=None, names=['labels', 'text'])
 shuffled_list = np.array_split(df, args.validation_split)
+if VAL_DIR in os.listdir(project_data_path):
+    shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
 if VAL_DIR not in os.listdir(project_data_path):
     os.mkdir(os.path.join(project_data_path, VAL_DIR))
-else:
-    shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
 if args.output_dir in os.listdir('.'):
     shutil.rmtree(args.output_dir)
 # validation dirs has the validation folds
@@ -99,6 +99,7 @@ def fun():
     os.system("""
 python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_dir=./data/vp --vocab_file=./uncased_L-12_H-768_A-12/vocab.txt --bert_config_file=./uncased_L-12_H-768_A-12/bert_config.json --init_checkpoint=./uncased_L-12_H-768_A-12/bert_model.ckpt --max_seq_length=128 --train_batch_size=32 --learning_rate=2e-5 --num_train_epochs=3.0 --output_dir=./tmp/vp_output
 """)
+print(validation_dirs)
 trial_id = 0
 result = []
 for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_step):
@@ -109,7 +110,8 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                 for data_path in validation_dirs:
                     current_trial_dir = os.path.join(args.output_dir, str(trial_id))
                     command = generate_command(max_seq_length,lr, batch_size, epoch,data_path,trial_id, current_trial_dir)
-                    os.system(command)
+                    # os.system(command)
+                    print(command)
                     acc_sum += get_acc(current_trial_dir)
                 acc = acc_sum/float(len(validation_dirs))
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
