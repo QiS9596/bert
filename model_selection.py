@@ -86,7 +86,7 @@ def generate_command(max_seq_length, lr, batch, epoch, datapath, trial_identifie
     command += 'python run_classifier.py --task_name='+args.task + ' --do_train=true -- do_eval=true --data_dir='+datapath
     command += ' --vocab_file='+vocab_file + ' --bert_config_file='+config_file+' --init_checkpoint='+init_check
     command += ' --max_seq_length=' + str(max_seq_length) + ' --train_batch_size='+str(batch)+' --learning_rate='+str(lr)
-    command += ' --num_train_epochs='+epoch + ' --output_dir'+output_dir
+    command += ' --num_train_epochs='+str(epoch) + ' --output_dir'+output_dir
     return command
 
 def get_acc(output_dir):
