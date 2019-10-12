@@ -103,7 +103,7 @@ trial_id = 0
 result = []
 for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_step):
     for lr in np.arange(args.lr_low, args.lr_high+args.lr_step, args.lr_step):
-        for batch_size in range(args.batch_min, args.batch_high+1, args.batch_step):
+        for batch_size in range(args.batch_min, args.batch_max+1, args.batch_step):
             for epoch in np.arange(args.epoch_low, args.epoch_high+args.epoch_step, + args.epoch_step):
                 acc_sum = 0.0
                 for data_path in validation_dirs:
