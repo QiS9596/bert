@@ -40,6 +40,10 @@ DATA_BASE_PATH = './data'
 project_data_path = os.path.join(DATA_BASE_PATH, args.task)
 ALL_FILE_NAME = 'all.tsv'
 VAL_DIR = 'validation'
+try:
+    os.mkdir(args.output_dir)
+except Exception:
+    pass
 if ALL_FILE_NAME not in os.listdir(project_data_path):
     # no "all tsv" exists
     raise NotImplementedError
@@ -83,23 +87,21 @@ def generate_command(max_seq_length, lr, batch, epoch, datapath, trial_identifie
         command += 'srun ' + '-u ' + '-w ' + args.server + ' ' + '--gres=gpu:' + str(args.gpu) + ' '
         command += '-J' + str(trial_identifier) + ' gpurun.sh ' + '-c 1 '
 
-    command += 'python run_classifier.py --task_name='+args.task + ' --do_train=true -- do_eval=true --data_dir='+datapath
+    command += 'python run_classifier.py --task_name='+args.task + ' --do_train=true --do_eval=true --data_dir='+datapath
     command += ' --vocab_file='+vocab_file + ' --bert_config_file='+config_file+' --init_checkpoint='+init_check
     command += ' --max_seq_length=' + str(max_seq_length) + ' --train_batch_size='+str(batch)+' --learning_rate='+str(lr)
-    command += ' --num_train_epochs='+str(epoch) + ' --output_dir'+output_dir
+    command += ' --num_train_epochs='+str(epoch) + ' --output_dir='+output_dir
     return command
 
 def get_acc(output_dir):
     with open(os.path.join(output_dir, 'eval_results.txt')) as f:
         lines = f.readlines()
         words = lines[0].split(' ')
-        # print(words[2])
         return float(words[2])
 def fun():
     os.system("""
 python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_dir=./data/vp --vocab_file=./uncased_L-12_H-768_A-12/vocab.txt --bert_config_file=./uncased_L-12_H-768_A-12/bert_config.json --init_checkpoint=./uncased_L-12_H-768_A-12/bert_model.ckpt --max_seq_length=128 --train_batch_size=32 --learning_rate=2e-5 --num_train_epochs=3.0 --output_dir=./tmp/vp_output
 """)
-print(validation_dirs)
 trial_id = 0
 result = []
 for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_step):
@@ -111,7 +113,6 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                     current_trial_dir = os.path.join(args.output_dir, str(trial_id))
                     command = generate_command(max_seq_length,lr, batch_size, epoch,data_path,trial_id, current_trial_dir)
                     os.system(command)
-                    print(command)
                     acc_sum += get_acc(current_trial_dir)
                 acc = acc_sum/float(len(validation_dirs))
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
