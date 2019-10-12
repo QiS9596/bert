@@ -110,7 +110,7 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                 for data_path in validation_dirs:
                     current_trial_dir = os.path.join(args.output_dir, str(trial_id))
                     command = generate_command(max_seq_length,lr, batch_size, epoch,data_path,trial_id, current_trial_dir)
-                    # os.system(command)
+                    os.system(command)
                     print(command)
                     acc_sum += get_acc(current_trial_dir)
                 acc = acc_sum/float(len(validation_dirs))
