@@ -50,6 +50,7 @@ if ALL_FILE_NAME not in os.listdir(project_data_path):
     raise NotImplementedError
 all_data = os.path.join(project_data_path, ALL_FILE_NAME)
 df = pd.read_csv(all_data, sep='\t', header=None, names=['labels', 'text'])
+sup_df = pd.read_csv(os.path.join(project_data_path,'labels.txt'),sep='\t', header=None, names=['labels','text'])
 shuffled_list = np.array_split(df, args.validation_split)
 if VAL_DIR in os.listdir(project_data_path):
     shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
@@ -65,7 +66,7 @@ for i in range(args.validation_split):
         os.mkdir(validation_dir)
     validation_dirs.append(validation_dir)
     shuffled_list[i].to_csv(os.path.join(validation_dir, 'dev.tsv'), header=False, sep='\t', index=False)
-    train = pd.concat(shuffled_list[:i] + shuffled_list[i + 1:])
+    train = pd.concat(shuffled_list[:i] + shuffled_list[i + 1:] + [sup_df])
     train.to_csv(os.path.join(validation_dir, 'train.tsv'), header=False, sep='\t', index=False)
 
 vocab_file =os.path.join(args.base_model, 'vocab.txt')
