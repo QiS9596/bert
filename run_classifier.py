@@ -350,7 +350,7 @@ class VPProcessor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        return [str(x) for x in range(359)]
+        return [str(x) for x in range(361)]
 
     def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
