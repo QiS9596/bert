@@ -122,13 +122,15 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
 
                 acc = acc_sum/float(len(validation_dirs))
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
+                result = np.array(result)
+                df = pd.DataFrame(data=result, columns=['max_seq_len', 'lr', 'batch_size', 'epoch', 'acc'])
+                df.to_csv('./tmp/result.csv')
                 trial_id+=1
             trial_id +=1
         trial_id +=1
     trial_id +=1
-result = np.array(result)
-df = pd.DataFrame(data=result, columns=['max_seq_len', 'lr', 'batch_size', 'epoch','acc'])
-df.to_csv('./tmp/result.csv')
+# result = np.array(result)
+
 if args.clean:
     shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
     shutil.rmtree(args.output_dir)
