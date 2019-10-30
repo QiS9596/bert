@@ -119,6 +119,7 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                         acc_sum += get_acc(current_trial_dir)
                     except tf.errors.ResourceExhaustedError:
                         acc_sum += -99999
+                    trial_id += 1
 
                 acc = acc_sum/float(len(validation_dirs))
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
