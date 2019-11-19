@@ -3,6 +3,7 @@ import tensorflow as tf
 import os
 import argparse
 import pathlib
+import numpy as np
 from parse_bert_embedding_json import *
 
 parser = argparse.ArgumentParser(description='BERT feature extraction for vp dataset')
@@ -43,8 +44,8 @@ LABEL_TEXT_NAME = os.path.join(args.temp_dir, 'label_text.txt')
 TRAIN_FEATURE_NAME = os.path.join(args.temp_dir, 'train_feature.json')
 LABEL_FEATURE_NAME = os.path.join(args.temp_dir, 'label_feature.json')
 
-EMBEDDED_TRAIN_DATA = os.path.join(args.output_dir, 'all_.tsv')
-EMBEDDED_LABEL_DATA = os.path.join(args.output_dir, 'labels.tsv')
+EMBEDDED_TRAIN_DATA = os.path.join(args.output_dir, 'all.npy')
+EMBEDDED_LABEL_DATA = os.path.join(args.output_dir, 'labels.npy')
 
 VOCAB_ = os.path.join(args.bert_model, 'vocab.txt')
 BERT_CONFIG = os.path.join(args.bert_model, 'bert_config.json')
@@ -108,12 +109,15 @@ os.system(command_label)
 
 
 feature_train = parse_bert_embedding_json(TRAIN_FEATURE_NAME, args.method)
-df_train_embed = df_train['labels'].to_frame()
-df_train_embed['text'] = feature_train
-df_train_embed.to_csv(EMBEDDED_TRAIN_DATA, header=False, sep='\t', index=False)
-
+# df_train_embed = df_train['labels'].to_frame()
+# df_train_embed['text'] = feature_train
+# df_train_embed.to_csv(EMBEDDED_TRAIN_DATA, header=False, sep='\t', index=False)
+np.save(EMBEDDED_TRAIN_DATA, feature_train)
 
 feature_label = parse_bert_embedding_json(LABEL_FEATURE_NAME, args.method)
-df_labels_embed = df_labels['labels'].to_frame()
-df_labels_embed['text'] = feature_label
-df_labels_embed.to_csv(EMBEDDED_LABEL_DATA, header=False, sep='\t', index=False)
+# df_labels_embed = df_labels['labels'].to_frame()
+# df_labels_embed['text'] = feature_label
+# print(type(feature_label[0]))
+# print(df_train_embed['text'].dtype)
+# df_labels_embed.to_csv(EMBEDDED_LABEL_DATA, header=False, sep='\t', index=False)
+np.save(EMBEDDED_LABEL_DATA, feature_label)
