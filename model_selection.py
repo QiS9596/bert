@@ -106,8 +106,11 @@ python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_di
 """)
 trial_id = 0
 # load previously collected data
-checkpoint_df = pd.read_csv('./tmp/result.csv')
-result = list(checkpoint_df.values)
+try:
+    checkpoint_df = pd.read_csv('./tmp/result.csv')
+    result = list(checkpoint_df.values)
+except Exception:
+    result = []
 for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_step):
     for lr in np.arange(args.lr_low, args.lr_high+args.lr_step, args.lr_step):
         for batch_size in range(args.batch_min, args.batch_max+1, args.batch_step):
