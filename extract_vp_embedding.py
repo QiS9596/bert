@@ -5,7 +5,10 @@ import argparse
 import pathlib
 import numpy as np
 from parse_bert_embedding_json import *
-
+"""
+current version: even if we have only a single layer to extract, if we use concat4, it will still work correctly.
+even if we have layers other than 4, it will still concatenate it correctly.
+"""
 parser = argparse.ArgumentParser(description='BERT feature extraction for vp dataset')
 parser.add_argument('-method', type=str, default='concat4',
                     help="""Strategy for extract  features
@@ -22,7 +25,7 @@ parser.add_argument('-temp-dir', type=str, default='./tmp/vp_extract',
                     [default:./tmp/vp_extract]""")
 parser.add_argument('-output-dir', type=str, default='./data/vp/bert_embeddings',
                     help="""output dir of extracted feature
-                    [default:./data/vp/vert_embeddings]""")
+                    [default:./data/vp/bert_embeddings]""")
 parser.add_argument('-sequence-length', type=int, default=64,
                     help='padded sequence length [default:64]')
 parser.add_argument('-checkpoint-name', type=str, default='bert_model.ckpt',
@@ -30,6 +33,7 @@ parser.add_argument('-checkpoint-name', type=str, default='bert_model.ckpt',
                     [default: bert_model.ckpt]""")
 parser.add_argument('-batch-size', type=int, default=8,
                     help="""batch size [default:8]""")
+parser.add_argument('-layers', type=str, default='-1,-2,-3,-4', help="extracted layer")
 
 # arguments and variables
 args = parser.parse_args()
@@ -52,7 +56,7 @@ BERT_CONFIG = os.path.join(args.bert_model, 'bert_config.json')
 CHECKPOINT = os.path.join(args.bert_model, args.checkpoint_name)
 
 
-LAYERS = '-1,-2,-3,-4'
+LAYERS = args.layers
 # read data
 df_train = None
 df_labels = None

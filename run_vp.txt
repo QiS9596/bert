@@ -1,1 +1,6 @@
 python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_dir=./data/vp --vocab_file=./uncased_L-12_H-768_A-12/vocab.txt --bert_config_file=./uncased_L-12_H-768_A-12/bert_config.json --init_checkpoint=./uncased_L-12_H-768_A-12/bert_model.ckpt --max_seq_length=128 --train_batch_size=32 --learning_rate=2e-5 --num_train_epochs=3.0 --output_dir=./tmp/vp_output
+
+run hyperparameter tunning for vp fine tunning bert
+srun -u -w zirconium -Jvp_bert --gres=gpu:0 gpurun.sh -c 0 python model_selection.py -batch_step 16 -seqlen_step 16 -validation_split 10 -output-dir /data/data26/scratch/song1602/vp_val
+
+python extract_vp_embedding.py -layers -12 -output-dir ./data/vp/bert_embeddings/firstlayer
