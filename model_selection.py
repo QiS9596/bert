@@ -105,7 +105,12 @@ def fun():
 python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_dir=./data/vp --vocab_file=./uncased_L-12_H-768_A-12/vocab.txt --bert_config_file=./uncased_L-12_H-768_A-12/bert_config.json --init_checkpoint=./uncased_L-12_H-768_A-12/bert_model.ckpt --max_seq_length=128 --train_batch_size=32 --learning_rate=2e-5 --num_train_epochs=3.0 --output_dir=./tmp/vp_output
 """)
 trial_id = 0
-result = []
+# load previously collected data
+try:
+    checkpoint_df = pd.read_csv('./tmp/result.csv')
+    result = list(checkpoint_df.values)
+except Exception:
+    result = []
 for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_step):
     for lr in np.arange(args.lr_low, args.lr_high+args.lr_step, args.lr_step):
         for batch_size in range(args.batch_min, args.batch_max+1, args.batch_step):
@@ -120,6 +125,8 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                     except tf.errors.ResourceExhaustedError:
                         acc_sum += -99999
                     trial_id += 1
+                    # remove bert checkpoint etc.
+                    shutil.rmtree(current_trial_dir)
 
                 acc = acc_sum/float(len(validation_dirs))
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
