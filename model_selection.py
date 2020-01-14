@@ -14,13 +14,13 @@ parser.add_argument('-epoch-high', type=float, default=6, help='maximum number o
 parser.add_argument('-epoch-step', type=float, default=1, help='step size of epochs [default:1]')
 parser.add_argument('-batch-min', type=int, default=2, help='minimum batch size [default:2]')
 parser.add_argument('-batch-max', type=int, default=48, help='maximum batch size [default:2]')
-parser.add_argument('-batch_step', type=int, default=4, help='step size for batch size setups [default:4]')
+parser.add_argument('-batch-step', type=int, default=4, help='step size for batch size setups [default:4]')
 # seq
 parser.add_argument('-seqlen-low', type=int, default=16, help='minimum value of sequence length [default:16]')
 parser.add_argument('-seqlen-high', type=int, default=64, help='maximum value of sequence length [default:64]')
-parser.add_argument('-seqlen_step', type=int, default=2, help='step size for sequence length trials [default:2]')
+parser.add_argument('-seqlen-step', type=int, default=2, help='step size for sequence length trials [default:2]')
 
-parser.add_argument('-validation_split', type=int, default=4, help='K of k-fold validation [default:4]')
+parser.add_argument('-validation-split', type=int, default=10, help='K of k-fold validation [default:10]')
 parser.add_argument('-task', type=str, default='vp', help='task for the classification [default:vp]')
 parser.add_argument('-simple-hold-out', action='store_true', default=False,
                     help='if set to true, use low parameters for a single evaluation instead of k-fold')
@@ -34,12 +34,15 @@ parser.add_argument('-server', default='vibranium',
 parser.add_argument('-gpu', type=int, default=0,
                     help='gpu device for slurm, if srun is not set to True, ignored. [default:1]')
 parser.add_argument('-clean',action='store_true', default=False, help='set if to clean the files[default:False]')
+parser.add_argument('-train-file', type=str, default='all.tsv', help='train data tsv name [default:all.tsv]')
+parser.add_argument('-label-file', type=str, default='labels.txt', help='example for each classes [default:labels.txt]')
+parser.add_argument('-result-file', type=str, default='./tmp/result.csv', help='path to store evaluation result [default:./tmp/result.csv]')
 
 
 args = parser.parse_args()
 DATA_BASE_PATH = './data'
 project_data_path = os.path.join(DATA_BASE_PATH, args.task)
-ALL_FILE_NAME = 'all.tsv'
+ALL_FILE_NAME = args.train_file
 VAL_DIR = 'validation'
 try:
     os.mkdir(args.output_dir)
@@ -50,7 +53,7 @@ if ALL_FILE_NAME not in os.listdir(project_data_path):
     raise NotImplementedError
 all_data = os.path.join(project_data_path, ALL_FILE_NAME)
 df = pd.read_csv(all_data, sep='\t', header=None, names=['labels', 'text'])
-sup_df = pd.read_csv(os.path.join(project_data_path,'labels.txt'),sep='\t', header=None, names=['labels','text'])
+sup_df = pd.read_csv(os.path.join(project_data_path,args.label_file),sep='\t', header=None, names=['labels','text'])
 shuffled_list = np.array_split(df, args.validation_split)
 if VAL_DIR in os.listdir(project_data_path):
     shutil.rmtree(os.path.join(project_data_path, VAL_DIR))
@@ -107,7 +110,7 @@ python run_classifier.py --task_name=vp --do_train=true --do_eval=true --data_di
 trial_id = 0
 # load previously collected data
 try:
-    checkpoint_df = pd.read_csv('./tmp/result.csv')
+    checkpoint_df = pd.read_csv(args.result_file)
     result = list(checkpoint_df.values)
 except Exception:
     result = []
@@ -132,7 +135,7 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                 result.append([max_seq_length, lr, batch_size, epoch,acc])
                 result_ = np.array(result)
                 df = pd.DataFrame(data=result_, columns=['max_seq_len', 'lr', 'batch_size', 'epoch', 'acc'])
-                df.to_csv('./tmp/result.csv')
+                df.to_csv(args.result_file)
                 trial_id+=1
             trial_id +=1
         trial_id +=1
