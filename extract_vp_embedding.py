@@ -33,7 +33,7 @@ parser.add_argument('-checkpoint-name', type=str, default='bert_model.ckpt',
                     [default: bert_model.ckpt]""")
 parser.add_argument('-batch-size', type=int, default=8,
                     help="""batch size [default:8]""")
-parser.add_argument('-layers', type=str, default='-1,-2,-3,-4', help="extracted layer")
+parser.add_argument('-layers', type=str, default='-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12', help="extracted layer")
 
 # arguments and variables
 args = parser.parse_args()

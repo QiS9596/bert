@@ -12,7 +12,9 @@ def parse_bert_embedding_json(json_path, mode='concat4'):
                 if mode == 'concat4':
                     word_embedding = concat_embedding(bert_layers)
                 elif mode == 'avg4':
-                    weights = [0.25,0.25,0.25,0.25]
+                    # weights = [0.25,0.25,0.25,0.25]
+                    num_layers = len(bert_layers)
+                    weights = [1.0/(1.0*num_layers)]*num_layers
                     word_embedding = weighted_sum_embeddings(weights, bert_layers)
                 sentence_embedding.append(word_embedding)
             sentences.append(np.array(sentence_embedding))
