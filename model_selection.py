@@ -36,6 +36,7 @@ parser.add_argument('-gpu', type=int, default=0,
 parser.add_argument('-clean',action='store_true', default=False, help='set if to clean the files[default:False]')
 parser.add_argument('-train-file', type=str, default='all.tsv', help='train data tsv name [default:all.tsv]')
 parser.add_argument('-label-file', type=str, default='labels.txt', help='example for each classes [default:labels.txt]')
+parser.add_argument('-predict-result', action='store_true', help='if to predict result on vp task')
 parser.add_argument('-result-file', type=str, default='./tmp/result.csv', help='path to store evaluation result [default:./tmp/result.csv]')
 
 
@@ -76,7 +77,7 @@ vocab_file =os.path.join(args.base_model, 'vocab.txt')
 config_file = os.path.join(args.base_model, 'bert_config.json')
 init_check = os.path.join(args.base_model, 'bert_model.ckpt')
 
-def generate_command(max_seq_length, lr, batch, epoch, datapath, trial_identifier, output_dir):
+def generate_command(max_seq_length, lr, batch, epoch, datapath, trial_identifier, output_dir, predict):
     """
 
     :param lr:
@@ -96,6 +97,8 @@ def generate_command(max_seq_length, lr, batch, epoch, datapath, trial_identifie
     command += ' --vocab_file='+vocab_file + ' --bert_config_file='+config_file+' --init_checkpoint='+init_check
     command += ' --max_seq_length=' + str(max_seq_length) + ' --train_batch_size='+str(batch)+' --learning_rate='+str(lr)
     command += ' --num_train_epochs='+str(epoch) + ' --output_dir='+output_dir
+    if predict:
+        command += '--do_predict=true'
     return command
 
 def get_acc(output_dir):
@@ -121,7 +124,7 @@ for max_seq_length in range(args.seqlen_low, args.seqlen_high+1, args.seqlen_ste
                 acc_sum = 0.0
                 for data_path in validation_dirs:
                     current_trial_dir = os.path.join(args.output_dir, str(trial_id))
-                    command = generate_command(max_seq_length,lr, batch_size, epoch,data_path,trial_id, current_trial_dir)
+                    command = generate_command(max_seq_length,lr, batch_size, epoch,data_path,trial_id, current_trial_dir, args.predict_result)
                     try:
                         os.system(command)
                         acc_sum += get_acc(current_trial_dir)
