@@ -49,9 +49,9 @@ try:
     os.mkdir(args.output_dir)
 except Exception:
     pass
-if ALL_FILE_NAME not in os.listdir(project_data_path):
-    # no "all tsv" exists
-    raise NotImplementedError
+# if ALL_FILE_NAME not in os.listdir(project_data_path):
+#     # no "all tsv" exists
+#     raise NotImplementedError
 all_data = os.path.join(project_data_path, ALL_FILE_NAME)
 df = pd.read_csv(all_data, sep='\t', header=None, names=['labels', 'text'])
 sup_df = pd.read_csv(os.path.join(project_data_path,args.label_file),sep='\t', header=None, names=['labels','text'])
