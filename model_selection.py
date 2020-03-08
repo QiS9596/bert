@@ -69,9 +69,9 @@ for i in range(args.validation_split):
     if VAL_DIR + str(i) not in os.listdir(os.path.join(project_data_path, VAL_DIR)):
         os.mkdir(validation_dir)
     validation_dirs.append(validation_dir)
-    shuffled_list[i].to_csv(os.path.join(validation_dir, 'dev.tsv'), header=False, sep='\t', index=False)
+    shuffled_list[i].to_csv(os.path.join(validation_dir, 'dev.tsv'),  sep='\t', index=False)
     train = pd.concat(shuffled_list[:i] + shuffled_list[i + 1:] + [sup_df])
-    train.to_csv(os.path.join(validation_dir, 'train.tsv'), header=False, sep='\t', index=False)
+    train.to_csv(os.path.join(validation_dir, 'train.tsv'), sep='\t', index=False)
 
 vocab_file =os.path.join(args.base_model, 'vocab.txt')
 config_file = os.path.join(args.base_model, 'bert_config.json')
