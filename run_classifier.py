@@ -390,6 +390,9 @@ class SST2Processor(DataProcessor):
             "test"
         )
 
+    def get_labels(self):
+        return ['0', '1']
+
     def _create_examples(self, lines, set_type):
         """create a list of examples based on input lines"""
         examples = []
