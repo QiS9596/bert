@@ -368,6 +368,43 @@ class VPProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
 
+class SST2Processor(DataProcessor):
+    def get_train_examples(self, data_dir):
+        """see base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, 'train.tsv')),
+            "train"
+        )
+
+    def get_dev_examples(self, data_dir):
+        """see base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, 'dev.tsv')),
+            "dev"
+        )
+
+    def get_test_examples(self, data_dir):
+        """see base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, 'test.tsv')),
+            "test"
+        )
+
+    def _create_examples(self, lines, set_type):
+        """create a list of examples based on input lines"""
+        examples = []
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(line[0])
+            if set_type == "test":
+                label = "0"
+            else:
+                label = tokenization.convert_to_unicode(line[1])
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
 
 class ColaProcessor(DataProcessor):
   """Processor for the CoLA data set (GLUE version)."""
