@@ -41,10 +41,10 @@ parser.add_argument('-gpu', type=int, default=0,
                     help='gpu device for slurm, if srun is not set to True, ignored. [default:1]')
 
 parser.add_argument('-clean',action='store_true', default=False, help='set if to clean the files[default:False]')
-parser.add_argument('-train-file', type=str, default='train.tsv', help='train data tsv name [default:all.tsv]')
+parser.add_argument('-train-file', type=str, default='train.tsv', help='train data tsv name [default:train.tsv]')
 parser.add_argument('-dev-file', type=str, default='dev.tsv', help='official dev file[default:dev.tsv]')
 
-# parser.add_argument('-predict-result', action='store_true', default=False, help='if to predict result on vp task')
+parser.add_argument('-predict-result', action='store_true', default=False, help='if to predict result on vp task, deprecated on this task')
 parser.add_argument('-result-file', type=str, default='./tmp/result.csv', help='path to store evaluation result [default:./tmp/result.csv]')
 parser.add_argument('-oneset', action='store_true', default=False, help='set true to test just one hyperparameter set, instead of grid search')
 
